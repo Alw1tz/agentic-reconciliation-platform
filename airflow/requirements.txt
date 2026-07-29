@@ -1,0 +1,12 @@
+apache-airflow-providers-amazon
+apache-airflow-providers-apache-spark
+boto3
+pyspark==4.0.3
+snowflake-connector-python
+anthropic
+langgraph
+langchain-core
+mcp
+slack_sdk
+sqlglot
+python-dotenv

@@ -1,0 +1,20 @@
+# Secrets
+.env
+
+# Airflow runtime state -- airflow.cfg has auto-generated secrets
+# (secret_key, jwt_secret) baked in at init time, never commit it
+airflow/logs/
+airflow/config/
+airflow/.ivy2/
+
+# Spark
+spark/data/*
+!spark/data/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS
+.DS_Store
