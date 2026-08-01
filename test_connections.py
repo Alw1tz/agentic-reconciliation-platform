@@ -58,6 +58,24 @@ def check_slack() -> bool:
         return False
 
 
+def check_anthropic() -> bool:
+    import anthropic
+
+    try:
+        client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+        resp = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=8,
+            messages=[{"role": "user", "content": "Reply with just: ok"}],
+        )
+        text = "".join(block.text for block in resp.content if hasattr(block, "text"))
+        print(f"  Anthropic API ok: model={resp.model} reply={text.strip()!r}")
+        return True
+    except anthropic.APIError as e:
+        print(f"  Anthropic connection failed: {e}")
+        return False
+
+
 def check_s3() -> bool:
     import boto3
     from botocore.exceptions import ClientError
@@ -83,6 +101,7 @@ def main() -> None:
     checks = {
         "Snowflake": check_snowflake,
         "Slack": check_slack,
+        "Anthropic": check_anthropic,
         "AWS S3": check_s3,
     }
 

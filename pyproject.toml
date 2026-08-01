@@ -1,7 +1,7 @@
 [project]
 name = "agentic-reconciliation-platform"
 version = "0.1.0"
-description = "Add your description here"
+description = "Uses cases from basic (ez) to expert (hard)"
 requires-python = ">=3.12"
 dependencies = [
     "anthropic>=0.120.2",

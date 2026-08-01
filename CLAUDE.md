@@ -64,3 +64,49 @@ Key directories and files:
 - `agents/` - Agent implementations with base classes
 - `mcp_servers/` - Secure MCP servers for Snowflake and Slack access
 - `run_demo.sh` - Quick demo script
+
+## Known Gap
+
+`airflow/dags/reconciliation_dag.py` imports `agents/pipeline.py` (a
+`run_pipeline` function), which does not exist yet. Only
+`agents/minimal_pipeline.py` and `agents/minimal/simple_pipeline.py` exist,
+and neither is what the DAG actually calls. This gets fixed for real by
+`projects/top_recon_pipeline_live` (see Learning Projects below) rather than
+patched ad hoc.
+
+## Coding Standards
+
+- No emojis in code comments, documentation, or output — professional,
+  technical language only.
+- New standalone project folders under `projects/` are prefixed by
+  difficulty: `ez_` (basic, single concept in isolation), `mid_` (moderate,
+  chaining/orchestration), `top_` (expert, multi-agent + real infra).
+
+## Learning Projects
+
+`projects/` is a progressive curriculum (ez → mid → top) covering this
+repo's whole stack — Airflow, Spark, Snowflake/S3, MCP, agents, LangGraph,
+and (capstone-only) dbt — one piece in isolation before combining them,
+ending in a registry-driven dynamic ELT pipeline and a conversational Slack
+capstone. Most projects are
+self-contained and run via `uv run python3 projects/<name>/...`; a few
+(marked below) place their real DAG/Spark file under `airflow/dags/` or
+`spark/apps/` instead, since those are the only two directories
+docker-compose mounts into those containers — see `CURRICULUM.md` for full
+detail on each project and `projects/README.md` for live status.
+
+| # | Folder | Teaches |
+|---|---|---|
+| 1 | `ez_airflow_hello` | Author an Airflow DAG from scratch (`airflow/dags/`) |
+| 2 | `ez_spark_hello` | Author a standalone Spark job from scratch (`spark/apps/`) |
+| 3 | `ez_snowflake_s3_etl` | Minimal Extract (S3) + Load (Snowflake), no orchestration |
+| 4 | `ez_mcp_basics` | Raw MCP protocol (toy server + client), no LLM involved |
+| 5 | `ez_agent_tool_loop` | Raw Claude tool-use loop via the `anthropic` SDK, no MCP/LangGraph |
+| 6 | `ez_agent_meets_mcp` | An agent whose tools are discovered dynamically from an MCP server |
+| 7 | `mid_airflow_spark_pipeline` | An Airflow DAG orchestrating a real Spark job (`airflow/dags/` + `spark/apps/`) |
+| 8 | `mid_manual_agent_chain` | Two agents chained by hand, no framework |
+| 9 | `mid_langgraph_graph` | Same pipeline as an explicit LangGraph `StateGraph` |
+| 10 | `mid_human_in_the_loop` | LangGraph interrupt/resume gated on a real Slack reaction |
+| 11 | `top_dynamic_etl_pipeline` | Registry-driven dynamic DAGs + Snowflake-native RAW/BRONZE parsing + dbt SILVER/GOLD |
+| 12 | `top_recon_pipeline_live` | Implements the missing `agents/pipeline.py` for real |
+| 13 | `top_slack_requirements_bot` | Slack bot gathers requirements via chat, triggers a multi-agent pipeline, reports back |
