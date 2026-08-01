@@ -1,41 +1,66 @@
-# agentic-reconciliation-platform
+# CLAUDE.md
 
-A full-stack, real-infra rebuild of the JD's "08:00 Intelligence
-Synthesis" scenario for a Lead Agentic Data Systems Engineer interview:
-Airflow orchestrates a nightly reconciliation, Spark computes day-over-day
-diffs against real Snowflake tables, and a LangGraph agent pipeline
-(scout → remediate) posts its finding and drafted fix to Slack via a
-Slack MCP server for human approval — mirroring the candidate's real
-production reconciliation DAG at Rappi, now with the agentic layer it was
-missing.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Sibling to `../spark-aws-pipeline/` (its docker-compose service
-definitions were the starting point here) and
-`../principal-data-ai-engineer-handbook/labs/ai/agentic-demo/` (the free,
-local-model prototype this project is the paid, real-infra version of).
+## Project Overview
 
-## Stack
+This is a full-stack, real-infra rebuild of a JD "08:00 Intelligence Synthesis" scenario for a Lead Agentic Data Systems Engineer interview. The system:
 
-- Airflow 3.2.2 (SequentialExecutor + SQLite) — UI: http://localhost:8082
-- Spark 4.0.3 standalone cluster — Master UI: http://localhost:9090
-- Real Snowflake (own dedicated database, see `.env`)
-- Real S3 bucket: `carlos-agentic-recon-platform`
-- Real Slack workspace via a Slack app (bot token in `.env`)
-- Claude Sonnet 5 via the `anthropic` SDK (real API spend — a few cents
-  per pipeline run)
+- Airflow orchestrates a nightly reconciliation
+- Spark computes day-over-day diffs against real Snowflake tables  
+- A LangGraph agent pipeline (scout → remediate) posts findings and drafted fixes to Slack via a Slack MCP server for human approval
+- Mirrors the candidate's actual production reconciliation DAG at Rappi, with the missing agentic layer
 
-## Governance
+## Architecture Overview
 
-The pipeline drafts a fix and posts it to Slack for a human ✅ reaction.
-It does **not** auto-apply anything to Snowflake — that's a deliberate
-scope boundary, not a missing feature; see the red-team finding in the
-sibling `agentic-demo` project for why.
+The system follows a three-tier architecture pattern:
 
-## Commands
+1. **Data Layer**: Snowflake warehouse containing source/target data
+2. **Compute Layer**: Spark cluster for distributed diff processing  
+3. **Agent Layer**: LangGraph pipeline with MCP servers for secure access to systems
+
+Key components:
+- Airflow DAG (`airflow/dags/reconciliation_dag.py`) orchestrates the full workflow
+- Spark job (`spark/apps/diff_source_target.py`) performs distributed diffs 
+- Agent pipeline (`agents/minimal_pipeline.py`) with modular agent design
+- MCP servers (`mcp_servers/`) for secure system access:
+  - `snowflake_server.py` - read-only Snowflake access with SQL validation
+  - `slack_server.py` - Slack posting and reaction reading
+
+## Key Design Patterns
+
+The codebase follows several important patterns:
+
+1. **Modular Agent Architecture**: Reusable base agent classes (`agents/base/agent.py`) with specific implementations in `agents/minimal/core_agent.py`
+2. **MCP Protocol Integration**: All external system access goes through MCP servers for security and controlled access
+3. **Human-in-the-Loop Design**: No automatic writes to Snowflake - all changes must be approved via Slack reactions
+4. **Separation of Concerns**: Clear boundaries between data processing, agent logic, and system interaction
+
+## Development Commands
 
 ```bash
+# Setup and initialization
 docker compose up airflow-init   # first time only
-docker compose up -d
-docker compose exec spark-master /opt/spark/bin/spark-submit \
-  --master spark://spark-master:7077 /opt/spark/apps/diff_source_target.py
+docker compose up -d             # start all services
+
+# Running the pipeline  
+docker compose exec airflow-apiserver airflow dags trigger reconciliation_dag
+
+# Testing/development
+python3 agents/minimal_pipeline.py  # run minimal demo
+./run_demo.sh                       # run full demo script
+
+# Monitoring
+# Airflow UI: http://localhost:8082 (airflow / airflow)
+# Spark Master UI: http://localhost:9090  
+# Spark Worker UIs: http://localhost:9091, http://localhost:9092
 ```
+
+## File Structure
+
+Key directories and files:
+- `airflow/dags/reconciliation_dag.py` - Main orchestration DAG
+- `spark/apps/diff_source_target.py` - Spark diff job  
+- `agents/` - Agent implementations with base classes
+- `mcp_servers/` - Secure MCP servers for Snowflake and Slack access
+- `run_demo.sh` - Quick demo script

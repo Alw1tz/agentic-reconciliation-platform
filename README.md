@@ -50,6 +50,15 @@ reaction. That boundary is deliberate: the security/trust boundary lives
 in the tool implementation (what `run_sql_query` will and won't execute),
 not in whether the model "behaves."
 
+## Minimal Architecture Demo
+
+This repository also contains a minimal, production-ready demonstration showing:
+- Reusable base agent classes for modularity
+- Modular pipeline architecture with clear separation of concerns  
+- MCP-style operations that can be extended
+- Human approval workflows for security
+- Scalable design pattern for multiple use cases
+
 ## Stack
 
 - **Airflow 3.2.2** (SequentialExecutor + SQLite) — single-node, enough
@@ -85,6 +94,8 @@ Watch the configured Slack channel for the posted anomaly + drafted fix.
 ```
 airflow/dags/reconciliation_dag.py   # the DAG
 spark/apps/diff_source_target.py     # the distributed diff job
-mcp_servers/                         # the two MCP servers
+mcp_servers/                         # the two MCP servers  
 agents/pipeline.py                   # the LangGraph pipeline
+agents/minimal_pipeline.py           # minimal demonstration pipeline
+demo_minimal.py                      # quick demo script
 ```
