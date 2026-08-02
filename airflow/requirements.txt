@@ -10,3 +10,5 @@ mcp
 slack_sdk
 sqlglot
 python-dotenv
+dbt-core
+dbt-snowflake

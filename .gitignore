@@ -10,17 +10,21 @@ airflow/.ivy2/
 # Spark
 spark/data/*
 !spark/data/.gitkeep
+!spark/data/ez_hello_sales.csv
 
 # Python
 __pycache__/
 *.pyc
 .venv/
 
+# dbt -- vendored package source (dbt deps) and compiled/run artifacts,
+# same idea as node_modules -- never commit either
+projects/top_dynamic_etl_pipeline/dbt/dbt_packages/
+projects/top_dynamic_etl_pipeline/dbt/target/
+projects/top_dynamic_etl_pipeline/dbt/logs/
+
 # OS
 .DS_Store
 
 # notes
 notes.txt
-
-# projects data
-CURRICULUM.md

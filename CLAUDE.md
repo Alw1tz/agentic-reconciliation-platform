@@ -74,6 +74,25 @@ and neither is what the DAG actually calls. This gets fixed for real by
 `projects/top_recon_pipeline_live` (see Learning Projects below) rather than
 patched ad hoc.
 
+## Known Gotcha: `.env` changes need a container recreate
+
+`docker-compose.yaml` loads `.env` via `env_file` at container *creation*
+time. Editing `.env` (e.g. filling in AWS/Snowflake/Slack credentials after
+the stack is already up) does **not** propagate to already-running
+containers — `docker compose restart` doesn't reload it either. Recreate
+the affected services:
+
+```bash
+docker compose up -d --force-recreate airflow-apiserver airflow-scheduler airflow-dag-processor airflow-triggerer
+```
+
+This exact gap caused `SparkSubmitOperator` tasks to fail with
+`NoAwsCredentialsException` despite valid keys sitting in `.env` — the
+running container's `$AWS_ACCESS_KEY_ID`/`$AWS_SECRET_ACCESS_KEY` were
+still empty from before the file was filled in. Check with:
+`docker compose exec airflow-apiserver bash -c 'echo -n "$AWS_ACCESS_KEY_ID" | wc -c'`
+(should be non-zero).
+
 ## Coding Standards
 
 - No emojis in code comments, documentation, or output — professional,

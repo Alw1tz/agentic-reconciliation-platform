@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: silver_noaa_isd_observations
+    description: >
+      Cleaned, semantically-reshaped NOAA ISD observations -- one row per
+      station-observation, real physical units, a combined timestamp, and
+      a plausibility flag. Tests below use the MIN/MAX ranges documented
+      in NOAA's own isd-format-document.pdf, not invented bounds.
+    tests:
+      # ISD can legitimately have more than one report type at the same
+      # station-timestamp (e.g. a SYNOP and a METAR both filed for the
+      # same minute) -- warn on duplicates, don't hard-fail. Model-level,
+      # not column-level -- this test doesn't apply to a single column.
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [station_id, observed_at, report_type_code]
+          config:
+            severity: warn
+    columns:
+      - name: station_id
+        tests:
+          - not_null
+      - name: observed_at
+        tests:
+          - not_null
+      - name: latitude
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -90
+                max_value: 90
+      - name: longitude
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -180
+                max_value: 180
+      - name: elevation_m
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -400
+                max_value: 8850
+      - name: wind_speed_mps
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 90
+      - name: air_temp_c
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -93.2
+                max_value: 61.8
+      - name: dew_point_c
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -98.2
+                max_value: 36.8
+      - name: sea_level_pressure_hpa
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 860.0
+                max_value: 1090.0

@@ -36,10 +36,10 @@ tool-use loop, shared verbatim by 5 and 6) and `connections.py`
 
 | # | Folder | Teaches | Status |
 |---|---|---|---|
-| 7 | `mid_airflow_spark_pipeline` | An Airflow DAG orchestrating a real Spark job via `SparkSubmitOperator` | planned |
-| 8 | `mid_manual_agent_chain` | Two agents chained by hand, no framework | planned |
-| 9 | `mid_langgraph_graph` | Same pipeline rebuilt as an explicit LangGraph `StateGraph` | planned |
-| 10 | `mid_human_in_the_loop` | LangGraph interrupt/resume gated on a real Slack reaction | planned |
+| 7 | `mid_airflow_spark_pipeline` | An Airflow DAG orchestrating a real Spark job via `SparkSubmitOperator` | built |
+| 8 | `mid_manual_agent_chain` | Two agents chained by hand, no framework | built |
+| 9 | `mid_langgraph_graph` | Same pipeline rebuilt as an explicit LangGraph `StateGraph` | built |
+| 10 | `mid_human_in_the_loop` | LangGraph interrupt/resume gated on a real Slack reaction | built |
 
 ## Tier 3: advanced capstones
 

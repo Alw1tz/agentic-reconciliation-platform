@@ -1,0 +1,19 @@
+# Committed, not gitignored -- holds no secrets, only env_var() references.
+# docker-compose.yaml's `env_file: - ${ENV_FILE_PATH:-.env}` already injects
+# these as real process env vars into the Airflow container that invokes
+# dbt (see airflow/dags/top_dynamic_etl/dag_factory.py's run_dbt task), so
+# this "just works" with zero new secret-handling code -- same single-.env
+# convention as every other credential in this repo.
+top_dynamic_etl_pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+      schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
+      threads: 4

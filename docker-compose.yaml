@@ -41,6 +41,7 @@ x-airflow-common:
     - ./mcp_servers:/opt/airflow/mcp_servers
     - ./agents:/opt/airflow/agents
     - ./airflow/.ivy2:/opt/airflow/.ivy2
+    - ./projects/top_dynamic_etl_pipeline/dbt:/opt/airflow/dbt
     - ~/.aws:/home/airflow/.aws:ro
   user: "${AIRFLOW_UID:-50000}:0"
   networks:

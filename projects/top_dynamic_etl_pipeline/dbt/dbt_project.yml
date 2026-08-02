@@ -1,0 +1,26 @@
+name: 'top_dynamic_etl_pipeline'
+version: '1.0.0'
+config-version: 2
+
+profile: 'top_dynamic_etl_pipeline'
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# No +schema override -- SILVER/GOLD land in the same single schema RAW/
+# BRONZE already use (SNOWFLAKE_SCHEMA from .env), same flat-schema
+# convention this repo uses everywhere else, and it avoids dbt trying to
+# auto-create a new schema the configured role may not have CREATE SCHEMA
+# on (SYSADMIN's grant, per CURRICULUM.md's ez_snowflake_s3_etl gotcha,
+# was scoped to exactly one schema, not "any dbt derives").
+models:
+  top_dynamic_etl_pipeline:
+    silver:
+      +materialized: view
+    gold:
+      +materialized: table

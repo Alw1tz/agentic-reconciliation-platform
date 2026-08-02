@@ -1,0 +1,17 @@
+version: 2
+
+# Declares the BRONZE tables dag_factory.py's parse_bronze task writes as
+# dbt sources() -- keeps the RAW/BRONZE-vs-dbt boundary explicit in code
+# (BRONZE is owned by the generated-SQL fixed-width parser, not by any dbt
+# model), not just prose.
+sources:
+  - name: bronze
+    schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
+    tables:
+      - name: bronze_noaa_isd_observation
+        description: >
+          One row per NOAA ISD station-observation record, parsed from the
+          fixed-width Control + Mandatory Data Sections (positions 1-105)
+          by airflow/dags/top_dynamic_etl/sql_generator.py. Sentinel
+          missing values are already NULL and scaling factors already
+          applied -- this table holds real physical units, not raw digits.

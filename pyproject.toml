@@ -6,6 +6,8 @@ requires-python = ">=3.12"
 dependencies = [
     "anthropic>=0.120.2",
     "boto3>=1.43.58",
+    "dbt-core>=1.9.0",
+    "dbt-snowflake>=1.9.0",
     "langchain-core>=1.5.2",
     "langgraph>=1.2.10",
     "mcp>=2.0.0",
