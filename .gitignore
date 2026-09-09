@@ -28,3 +28,7 @@ projects/top_dynamic_etl_pipeline/dbt/logs/
 
 # notes
 notes.txt
+
+# graphify -- generated knowledge-graph artifacts, regenerate with:
+#   graphify . --update
+graphify-out/
